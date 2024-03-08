@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,7 +17,10 @@ class PostFactory extends Factory
      */
     public function definition(): array
     {
+        $user_ids = User::pluck('id')->toArray();
+
         return [
+            'user_id' => $user_ids[array_rand($user_ids)],
             'title' => fake()->text(50),
             'author' => fake()->name(),
             'content' => fake()->text(200)

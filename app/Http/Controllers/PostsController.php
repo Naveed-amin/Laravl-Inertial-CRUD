@@ -6,6 +6,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class PostsController extends Controller
@@ -34,12 +35,12 @@ class PostsController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        $post = $request->validate([
+        $request->validate([
             'title' => 'required',
             'author' => 'required',
             'content' => 'required',
         ]);
-        $post = Post::create($post);
+        $post = Post::create($request->all());
         return to_route('posts.index');
     }
 
