@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AuthController extends Controller
@@ -15,13 +16,35 @@ class AuthController extends Controller
 
     public function registerStore(Request $request)
     {
-        $user = $request->validate([
+        $request->validate([
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required|min:8',
         ]);
-        $user = User::create($user);
+        $user = User::create($request->all());
         return to_route('posts.index');
+    }
+
+
+
+    public function loginPage(){
+        return Inertia::render('Auth/Login');
+    }
+
+    public function loginUser(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            return to_route('posts.index');
+        }
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     public function users()
